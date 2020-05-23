@@ -1,0 +1,11 @@
+.formLabel{
+    color:gray;
+}
+.card{
+    min-width: 40rem;
+    text-align: center;
+}
+.row{
+    display: grid;
+    grid-auto-flow: column;
+}

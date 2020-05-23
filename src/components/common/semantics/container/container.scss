@@ -1,0 +1,16 @@
+main{
+    width: 100vw;
+    height: 100%;
+    position: static;
+    margin-top: 3rem;
+    box-sizing: border-box;
+    section.main-section{
+        margin:3rem;
+    }
+}
+aside{
+    ul{
+        list-style-type: decimal-leading-zero;
+        line-height: 3rem;
+    }
+}
