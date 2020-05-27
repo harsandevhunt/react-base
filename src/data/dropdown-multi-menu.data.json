@@ -1,46 +1,45 @@
 [
     {
-        "title": "HR",
+        "value": "HR",
         "submenu": null
     },
     {
-        "title": "Tech",
-        "submenu": [
-            {
-                "title": "Dev",
+        "value": "Tech",
+           "submenu" : [{
+                "value": "Dev",
                 "submenu": [
                     {
-                        "title": "Javascript",
+                        "value": "Javascript",
                         "submenu": null
                     },
                     {
-                        "title": "Java",
+                        "value": "Java",
                         "submenu": null
                     }
                 ]
             },
             {
-                "title": "Database",
+                "value": "Database",
                 "submenu": [
                     {
-                        "title": "MySql",
+                        "value": "MySql",
                         "submenu": null
                     },
                     {
-                        "title": "Mongo",
+                        "value": "Mongo",
                         "submenu": null
                     }
                 ]
             },
             {
-                "title": "QA",
+                "value": "QA",
                 "submenu": [
                     {
-                        "title": "Manual",
+                        "value": "Manual",
                         "submenu": null
                     },
                     {
-                        "title": "Automation",
+                        "value": "Automation",
                         "submenu": null
                     }
                 ]
@@ -48,7 +47,7 @@
         ]
     },
     {
-        "title": "Other",
+        "value": "Other",
         "submenu": null
     }
 ]

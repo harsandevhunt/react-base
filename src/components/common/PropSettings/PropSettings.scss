@@ -1,0 +1,28 @@
+.settings-container{
+    display: table;
+    width: 300px;
+    position:absolute;
+    right:100px;
+    word-break:break-word;
+    font-size:12px;
+    border:1px solid lightred;
+    box-sizing: border-box;
+    border-collapse: collapse;
+}
+.table-column{
+    display: table-column;
+}
+.tr{ 
+    display: table-row; 
+}
+.td{ 
+    display: table-cell; 
+    border: 1px solid #666;
+    padding: 2px 5px;
+}
+.width-60{
+    width: 60px;
+}
+.mx-width-250{
+    max-width: 250px;
+}

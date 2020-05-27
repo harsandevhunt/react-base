@@ -1,134 +1,291 @@
-//Variable
-$elem-width : 150px;
-$elem-height: 35px;
-.dropdown-menu-component{
-    .dropdown-btn{
-        width: $elem-width;
-        height: 40px;
-        font-size: 15px;
-        display: inline-block;
-        padding: 0px;
-        margin: 0px;
-        box-shadow: 0px 0px 1px;
-        .dropdown-btn-head{
-            max-width:90%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: inline-block;
-        }
-        .dropdown-btn-icon{
-            max-width: 10%;
-            color: grey;
-            position: relative;
-            float: right;
-            font-size: 20px;
-        }
-    }
-    .select-item{
-        border: 1px solid lightgray;
-        border-radius: 10px;
-        padding: 4px 5px;
-        margin: 0px 5px;
-        font-size: 11px;
-        display: inline-block;
-        cursor: pointer;
-        text-shadow: 0px 0px 8px #666;
-        box-shadow: 2px 2px 5px grey ;
-    }
-    .closeLabel{
-        float: right;
-        position: relative;
-        right: 15px;
-        top: 3px;
-        cursor: pointer;
-    }
-    .li-icon{
-        color: grey;
-        position: absolute;
-        margin:calc(12% - 0.59em) 0px 0px;
-        font-size: 12px;
-        right: 5px;
-    }
-    
-    .dropdown-container{
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    .dropdown-custom-menu {
-        height: auto;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        text-align: center;
-        color: blue;
-        cursor: pointer;
-        position: absolute;
-        background: white;
-        display: block;
-        z-index: 2;
-        ul{
-            padding:0px !important;
-            background: white;
-        }
-        ul,li{
-            width: $elem-width;
-        }
-        li {
-            float: left;
-            clear: both;
-            position: relative;
-            display: inline-block;
-            width: $elem-width;
-            line-height: $elem-height;
-            height: $elem-height;
-            text-decoration: none;
-            border-radius: 2px;
-            border:1px solid grey;
-            background: white;
-        }
-        
-        
-        li li a {
-            font-size: 12px;
-        }
-        
-        li li{
-            margin: -1px;
-        }
-        
-        li:hover,.active {
-            background: grey;
-            color: white;
-            & ul{
-                color: blue;
-            }
-        }
-        //Direct immediate child of List item hover for svg icon
-        li:hover > svg, li:hover .selected,li.active .selected{
-            color: white;
-        }
-        
-        ul {
-            position: relative;
-            left: $elem-width;
-            top: -$elem-height;
-            display: none;
-        }
-        
-        li:hover ul ul {
-            display: none;
-        }
-        
-        li:hover ul {
-            display: block;
-        }
-        li li:hover ul {
-            display: block;
-        }
-    
-    }
+//Variable Declaration
+$unit: px;
+$elem-height: 36;
+$background-elem:white;
+$list-background:white;
+$list-background-hover:grey;
+$list-background-active:grey;
+$color-trigger-icon:grey;
+$list-color:blue;
+$list-color-active:white;
+$list-color-selected:white;
+$list-color-icon:grey;
+$list-height-compact:28;
+$list-height-default:36;
+
+.dropdown-component {
+	width: auto;
+	&.default {
+		width: auto;
+		min-width: 7rem;
+		max-width: 15rem;
+		display: inline-flex;
+		.dropdown-trigger,
+		ul.dropdown-list,
+		li.list {
+			width: 100%;
+		}
+	}
+	&.fluid {
+		width: 100%;
+		min-width: 7rem;
+		display: flex;
+		.dropdown-trigger,
+		ul.dropdown-list,
+		li.list {
+			width: 100%;
+		}
+		&.flo-left{
+			.dropdown-list{
+				ul{
+					left: -7rem;
+					ul{
+						left:-100%
+					}
+				}
+			}
+		}
+	}
+	&.compact {
+		display: inline-block;
+		.dropdown-trigger{
+			height: $list-height-compact+$unit;
+		}
+		&.flo-left{
+			.dropdown-list{
+				ul{
+					top:-#{$list-height-compact - 1}$unit;
+				}
+				& > li.list ul.sub-list{
+					margin-left: -2%;
+				}
+			}
+		}
+		&.flo-right{
+			.dropdown-list{
+				ul{
+					top:-#{$list-height-compact - 1}$unit;
+				}
+				& > li.list ul.sub-list {
+					margin-left: 0%;
+				}
+			}
+		}
+		li.list {
+			height: $list-height-compact+$unit;
+			width: 7rem;
+		}
+
+	}
+	//Role based CSS
+	.role-link{
+		border: none;
+		background: none;
+		outline: none;
+		box-shadow: none !important;
+		&:focus{
+			outline: none;
+		}
+	}
+
+	.list-container {
+		display: flex;
+		flex-direction: row;
+	}
+	.dropdown-container {
+		width: 100%;
+	}
+	.dropdown-trigger {
+		height: 40px;
+		font-size: 15px;
+		padding: 0px;
+		margin: 0px;
+		float: left;
+		box-shadow: 0px 0px 1px;
+		.dropdown-trigger-head {
+			max-width: 90%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			display: inline-block;
+		}
+		.dropdown-trigger-icon {
+			max-width: 25%;
+			color: $color-trigger-icon;
+			position: relative;
+			float: right;
+			font-size: 20px;
+		}
+	}
+	.select-item {
+		border: 1px solid lightgray;
+		border-radius: 10px;
+		padding: 4px 5px;
+		margin: 0px 5px;
+		font-size: 11px;
+		display: inline-block;
+		cursor: pointer;
+		text-shadow: 0px 0px 8px #666;
+		box-shadow: 2px 2px 5px grey;
+	}
+	.closeLabel {
+		float: right;
+		position: relative;
+		right: 15px;
+		top: 3px;
+		cursor: pointer;
+	}
+	.li-icon {
+		color: $list-color-icon;
+		font-size: 12px;
+		margin-top: -22px;
+	}
+	ul {
+		list-style-type: none;
+		padding: 0px !important;
+		background: $background-elem;
+		z-index: 3;
+	}
+
+	//Flow based CSS
+	&.flo-left .dropdown-list {
+		ul {
+			position: relative;
+			left: -100%;
+			top: -#{$list-height-default - 1}$unit;
+			display: none;
+		}
+		// & > li.list > ul.sub-list {//margin-left: 4%;}
+	}
+	&.flo-right .dropdown-list {
+		ul {
+			position: relative;
+			left: 100%;
+			top: -#{$list-height-default - 1}$unit;
+			display: none;
+		}
+	}
+
+	//Align based CSS
+	&.align-left {
+		.dropdown-list {
+			div.text {
+				justify-content: flex-start;
+			}
+		}
+	}
+	&.align-right {
+		.dropdown-list {
+			div.text {
+				justify-content: flex-end;
+			}
+		}
+	}
+	&.align-center {
+		.dropdown-list {
+			div.text {
+				justify-content: center;
+			}
+		}
+	}
+
+	.dropdown-list {
+		& * {
+			clear: both;
+		}
+		height: auto;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		color: $list-color;
+		font-size: 14px;
+		cursor: pointer;
+		background: $list-background;
+		display: flex;
+		flex-direction: column;
+		z-index: 2;
+		//First level list
+		& > .list {
+			width: 100%;
+		}
+		//Rest level list
+		& > .list > ul {
+			width: auto;
+			max-width: 7rem;
+		}
+		li {
+			height: $list-height-default + $unit;
+			text-decoration: none;
+			border-radius: 1px;
+			border: 1px solid grey;
+			background: $list-background;
+			div.text {
+				display: flex;
+				align-items: center;
+				height: 100%;
+				padding: 0px 15px;
+			}
+		}
+
+		li li a {
+			font-size: 12px;
+		}
+
+		li:hover,
+		.active {
+			background: $list-background-active;
+			color: $list-color-active;
+			& ul {
+				color: $list-color;
+			}
+		}
+		.selected {
+			float: right;
+		}
+		//Direct immediate child of List item hover for svg icon
+		li:hover > svg,
+		li:hover .selected,
+		li.active .selected {
+			color: $list-color-selected;
+		}
+		//Position based CSS
+		&.p-left {
+			align-items: flex-start;
+		}
+		&.p-right {
+			align-items: flex-end;
+		}
+
+		li:hover ul ul {
+			display: none;
+		}
+
+		li:hover ul {
+			display: flex;
+			flex-direction: column;
+		}
+		li li:hover ul {
+			display: flex;
+			flex-direction: column;
+		}
+		//Prevent Select
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		-o-user-select: none;
+		user-select: none;
+	}
+	.flo-left {
+		float: left;
+	}
+	.flo-right {
+		float: right;
+	}
+	.d-none {
+		display: none;
+	}
+	.d-flex {
+		display: flex;
+	}
 }

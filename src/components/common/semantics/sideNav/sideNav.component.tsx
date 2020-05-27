@@ -11,6 +11,9 @@ export default (props:any) =>{
                 <li>
                 <NavLink to="dropdown-old">dropdown-old</NavLink>
                 </li>
+                <li>
+                <NavLink to="button">Button</NavLink>
+                </li>
             </ul>
         </aside>
     )

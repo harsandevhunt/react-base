@@ -30,7 +30,7 @@ class DropdownMenu extends React.Component<props, state> {
 	}
 
 	getMenuItemTitle = (menuItem: any, index: any, depthLevel: any) => {
-		return menuItem.title;
+		return menuItem.value;
 	};
 
 	getMenuItem = (menuItem: any, depthLevel: any, index: any) => {

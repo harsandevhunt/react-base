@@ -1,148 +1,287 @@
 import React, { createRef } from "react";
-import { RouteComponentProps } from '@reach/router';
-import { AiFillCaretRight, AiOutlineCheck, AiOutlineCaretDown } from "react-icons/ai";
-import _ from 'lodash';
+import { RouteComponentProps } from "@reach/router";
+import {
+	AiFillCaretRight,
+	AiFillCaretLeft,
+	AiOutlineCheck,
+	AiOutlineCaretDown,
+} from "react-icons/ai";
 import "./Dropdown.scss";
+
+interface DataProps {
+	value: string;
+	submenu?: null | undefined | DataProps[];
+}
+
+type Display = "default" | "compact" | "fluid";
+
+type Role = "button" | "link";
+
+type Side = "left" | "right";
 interface props {
-	data: [];
-	submenu?: any;
-	selectedItem?: any;
+	data: DataProps[];
+	role?: Role;
+	selectedItem?: any[];
 	title?: string;
-	domKey?:string;
-	active?:boolean;
-	multi?:boolean;
+	active?: boolean;
+	multi?: boolean;
 	path?: RouteComponentProps;
+	align?: Side;
+	position?: Side;
+	flow?: Side;
+	displaySelected?: boolean;
+	display?: Display;
+	onDropdownChange?:any;
+}
+
+interface Settings {
+	display?: Display;
+	role?: Role;
+	title?: string;
+	position?: Side;
+	flow?: Side;
+	align?: Side | "center";
 }
 
 interface state {
-	styleObj: any;
-	selectedItem?: any;
+	selectedItem?: [];
+	open?: boolean;
 }
 
 class Dropdown extends React.Component<props, state> {
-	static componentName = 'Dropdown';
-	node:any;
+	static componentName = "Dropdown";
+	private dropdownContainer: any;
+	settings = {} as Settings;
 	constructor(props: props) {
 		super(props);
-		this.state = { styleObj: { display: "none" } };
-		this.node = createRef<HTMLDivElement>();
+
+		//Initialize State
+		this.state = {
+			open: this.props.active,
+			selectedItem: [],
+		};
+
+		//Initialize setting props/defaults
+		this.checkAndSetDefaults();
+
+		// this.dropdownContainer = React.createRef();
+		this.dropdownContainer = createRef<HTMLDivElement>();
+
+		//Initializing Event listener for click capture on outside element
 		document.addEventListener("click", this.handleClick, false);
 	}
 
-	getMenuItemTitle = (menuItem: any, index: any, depthLevel: any) => {
-		return menuItem.title;
-	};
+	checkAndSetDefaults() {
+		//Set Component display style
+		this.settings.display = this.props.display || "default";
 
-	getMenuItem = (menuItem: any, depthLevel: any, index: any) => {
-		let title = this.getMenuItemTitle(menuItem, index, depthLevel);
-		let selItem:any;
-		let multiFlag:boolean = false;
-		function checkSelItem(sel:any,tit:string):boolean{
+		//Set Component role style
+		this.settings.role = this.props.role || "button";
+
+		//Set Component Title
+		this.settings.title = this.props.title || "Select";
+
+		//Set List Position
+		this.settings.position = this.props.position || "left";
+
+		//Set List Flow
+		this.settings.flow = this.props.flow || "right";
+
+		//Set List Alignment
+		this.settings.align = this.props.align || "center";
+	}
+
+	componentDidMount() {
+		//Manually determine the width of the trigger and list elements and positioning
+		this.calculateAndSetPosition();
+	}
+
+	calculateAndSetPosition(): void {
+		if (this.props.position) {
+			let triggerEl = this.dropdownContainer.querySelectorAll(
+				".dropdown-trigger"
+			)[0];
+			let listEl = this.dropdownContainer.querySelectorAll(
+				".dropdown-list"
+			)[0];
+			//Temporarily enabling List to calculate the List width
+			let classVal = listEl.className.replace("d-none", "d-flex");
+			listEl.className = classVal;
+			let triggerWidth = triggerEl.offsetWidth;
+			let listWidth = this.dropdownContainer.querySelectorAll(
+				".dropdown-list > li:first-child"
+			)[0].offsetWidth;
+
+			//Back to display none
+			if(!this.props.active){
+				classVal = listEl.className.replace("d-flex", "d-none");
+				listEl.className = classVal;
+			}
+			let val = "";
+			if (this.props.position === "right") {
+				val =
+					triggerWidth < listWidth
+						? `-${listWidth - triggerWidth}px`
+						: `${triggerWidth - listWidth}px`;
+			} else {
+				val =
+					triggerWidth > listWidth
+						? `-${listWidth - triggerWidth}px`
+						: ``;
+			}
+			listEl.style.marginLeft = val;
+			console.log(`triggerWidth : ${triggerWidth}
+						listWidth : ${listWidth}
+						marginLeft: ${val}
+						`);
+		}
+	}
+
+	getMenuItem = (menuItem: any, index: number) => {
+		let value = menuItem.value;
+		let selItem: any;
+		function checkSelItem(sel: any, tit: string): boolean {
 			let resp = false;
-			if(_.isArray(sel) && sel.indexOf(tit) > -1){
+			if (sel?.length && sel.indexOf(tit) > -1) {
 				resp = true;
-			}else if(_.isString(sel) && sel === tit){
+			} else if (typeof sel === "string" && sel === tit) {
 				resp = true;
 			}
 			return resp;
 		}
+		//Form list arrow based on flow
+		let arrowSymbol =
+			this.props.flow === "left" ? (
+				<AiFillCaretLeft className="li-icon flo-left" />
+			) : (
+				<AiFillCaretRight className="li-icon flo-right" />
+			);
 		if (menuItem.submenu && menuItem.submenu.length > 0) {
-			selItem = (this.state.selectedItem || this.props.selectedItem);
-			multiFlag = (this.props.multi)?true:false;
+			selItem = this.state.selectedItem || this.props.selectedItem;
+			let subMenus: any = [];
+			menuItem.submenu.map((item: DataProps, index: number) => {
+				return subMenus.push(this.getMenuItem(item, index));
+			});
 			return (
 				<li
-					key={title + index}
-					className={
-						checkSelItem(selItem,title) ? "active" : ""
-					}
+					key={value + index}
+					className={`list ${
+						checkSelItem(selItem, value) ? "active" : ""
+					}`}
 				>
-					{title}
-					<AiFillCaretRight className="li-icon"/>
-					<Dropdown
-						multi={multiFlag}
-						data={menuItem.submenu}
-						submenu={true}
-						selectedItem={selItem}
-					/>
+					<div className="text">{value}</div>
+					{arrowSymbol}
+					<ul className="sub-list">{subMenus}</ul>
 				</li>
 			);
 		} else {
-			selItem = (this.state.selectedItem || this.props.selectedItem);
-			let selIcon = <AiOutlineCheck className="li-icon selected"/>;
+			selItem = this.state.selectedItem || this.props.selectedItem;
+			let selIcon = <AiOutlineCheck className="li-icon selected" />;
 			return (
 				<li
-					key={title + index}
-					className={
-						checkSelItem(selItem,title) ? "active" : ""
-					}
+					key={value + index}
+					className={`list ${
+						checkSelItem(selItem, value) ? "active" : ""
+					}`}
 				>
-					{title}
-					{(checkSelItem(selItem,title)?selIcon:'')}
+					<div className="text">{value}</div>
+					{checkSelItem(selItem, value) ? selIcon : ""}
 				</li>
 			);
 		}
 	};
 
-	toggleMenu = (action?:any) => {
-		let displayValue = '';
-		if(action)
-			displayValue = (action === 'show')?'block':'none';
-		else
-			displayValue = this.state.styleObj.display === "none" ? "block" : "none";
-		this.setState({ styleObj: { display: displayValue } });
-	};
-
-	toggleHover = (event: any) => {
-		//console.log(event);
+	toggleMenu = (action?: any) => {
+		let displayFlag = false;
+		let { open } = JSON.parse(JSON.stringify(this.state));
+		if (action && typeof action === "string")
+			displayFlag = action === "show" ? true : false;
+		else displayFlag = !open;
+		if (displayFlag !== open) this.setState({ open: displayFlag });
 	};
 
 	selectRecord = (event: any) => {
-		if (
-			event.target.innerHTML &&
-			event.target.innerHTML.indexOf("<") === -1
-		) {
-			let selectedTxt = event.target.innerText;
-			let selObj = (this.state.selectedItem || []);
-			if(this.props.multi){
-				if(_.isArray(selObj))
-					selObj.push(selectedTxt);
-				else
-					selObj = [selectedTxt];
+		if (event.target.innerHTML) {
+			let selectedFlag = false;
+			let selectedTxt = "";
+			let listFlag = true;
+			for (let child of event.target.parentNode.children) {
+				//Checking UL availability
+				if (child.tagName.toUpperCase() === "UL") listFlag = false;
+
+				//Checkign SVG for selected class
+				if (
+					child.tagName.toUpperCase() === "SVG" &&
+					child.classList?.length &&
+					child.classList[0] === "li-icon" &&
+					child.classList[1] === "selected" &&
+					listFlag
+				)
+					selectedFlag = true;
+
+				//Checking DIV text for selected element
+				if (
+					child.tagName === "DIV" &&
+					child.className === "text" &&
+					listFlag
+				)
+					selectedTxt = child.innerText;
 			}
-			else
-				selObj = selectedTxt
-			this.setState({ selectedItem: selObj });
-			if(!this.props.multi)
-				this.toggleMenu('hide');
-		}else if(
-			event.target.innerHTML &&
-			event.target.innerHTML.indexOf("li-icon selected") > -1){
-				this.removeItem(event);
+			if (listFlag) {
+				let selObj = JSON.parse(
+					JSON.stringify(this.state.selectedItem)
+				);
+				if (selectedTxt && this.props.multi) selObj.push(selectedTxt);
+				else if (selectedTxt && !this.props.multi)
+					selObj = [selectedTxt];
+				if (selectedFlag) this.removeItem(event);
+				else {
+					this.setState({ selectedItem: selObj });
+					//Passing selected item to parent component
+					setTimeout(()=>{
+						this.props.onDropdownChange(this.state.selectedItem);
+					})
+				}
+				if (!this.props.multi) this.toggleMenu("hide");
+			}
 		}
 	};
 
-	removeItem = (event:any)=>{
-		if(this.props.multi){
-			let { selectedItem } = this.state;
-			let item = event.target.innerText;
-			selectedItem.splice(selectedItem.indexOf(item),1);
-			this.setState({selectedItem: selectedItem});
-		}else{
-			this.setState({selectedItem: ''});
+	removeItem = (event: any) => {
+		let selectedItem = [];
+		if (this.props.multi) {
+			selectedItem = JSON.parse(
+				JSON.stringify(this.state.selectedItem)
+			);
+			let item = "";
+			for (let child of event.target.parentNode.children) {
+				//Checking DIV text for selected element
+				if (child.tagName === "DIV" && child.className === "text")
+					item = child.innerText;
+			}
+			if (selectedItem?.length)
+				selectedItem.splice(selectedItem.indexOf(item), 1);
+			this.setState({ selectedItem: selectedItem });
 		}
+		this.setState({ selectedItem: selectedItem });
+		//Passing selected item to parent component
+		setTimeout(()=>{
+			this.props.onDropdownChange(this.state.selectedItem);
+		})
 	};
 
-	handleClick = (e:any)=>{
-		if(this.node && !this.node.contains)
+	handleClick = (e: any) => {
+		if (this.dropdownContainer && !this.dropdownContainer.contains) return;
+		if (
+			this.dropdownContainer.contains(e.target) &&
+			e.target.tagName === "DIV"
+		) {
 			return;
-		if(this.node.contains(e.target) && e.target.tagName === 'LI'){
-			return;
-		}else if(this.node.contains(e.target)){
-			this.toggleMenu('show');
-		}else{
-			this.toggleMenu('hide');
+		} else if (this.dropdownContainer.contains(e.target)) {
+			this.toggleMenu("show");
+		} else {
+			this.toggleMenu("hide");
 		}
-
 	};
 
 	componentWillUnmount() {
@@ -151,56 +290,93 @@ class Dropdown extends React.Component<props, state> {
 	}
 
 	render = () => {
+		//Format options
 		let { data } = this.props;
 		let options: any = [];
 		data.map((item, index) => {
-			return options.push(this.getMenuItem(item, 0, index));
+			return options.push(this.getMenuItem(item, index));
 		});
 
-		if (this.props.submenu && this.props.submenu === true)
-			return <ul className="sub">{options}</ul>;
-
-		let titleBlock = "Select";
-		if (this.props.title) {
-			titleBlock = this.props.title;
-		}
-
-		let selectedTxt:any;
-		if(this.props.multi && _.isArray(this.state.selectedItem)){
-			selectedTxt = this.state.selectedItem.map((item,i)=>{
+		//Format Display Selected Text
+		let selectedTxt: any;
+		if (
+			this.props.multi &&
+			this.state.selectedItem &&
+			this.state.selectedItem.length
+		) {
+			selectedTxt = this.state.selectedItem.map((item, i) => {
 				return (
-				<div className="select-item" key={i} onClick={this.removeItem}>{item}</div>
-				)
+					<div
+						className="select-item"
+						key={i}
+						onClick={this.removeItem}
+					>
+						{item}
+					</div>
+				);
 			});
-		}else{
-			selectedTxt = this.state.selectedItem;
+		} else {
+			selectedTxt = "";
 		}
+
+		//Format UI Render
 		return (
-			<div className="dropdown-menu-component">
-				{/* <div className="dropdown-container"> */}
-					<div style={{height:'30px'}}>
+			<>
+				<div
+					className={`
+								dropdown-component
+								${this.settings.display}
+								align-${this.settings.align}
+								p-${this.settings.position}
+								flo-${this.settings.flow}
+								`}
+				>
+					<div
+						style={
+							this.props.displaySelected
+								? { height: "30px" }
+								: { display: "none" }
+						}
+					>
 						<label>Selected : </label> {selectedTxt}
 					</div>
-					<div style={{display:'inline-block'}} ref={node => this.node = node}>
-						<button
-							className="dropdown-btn"
-							onClick={this.toggleMenu}
-						>
-							<div className="dropdown-btn-head" title={titleBlock}>{titleBlock}</div><AiOutlineCaretDown className="dropdown-btn-icon"/>
-						</button>
-						<ul
-							id="dropdown-custom-menu"
-							className="dropdown-custom-menu"
-							style={this.state.styleObj}
-							onClick={this.selectRecord}
-							onMouseEnter={this.toggleHover}
-							onMouseLeave={this.toggleHover}
-						>
-							{options}
-						</ul>
+
+					<div
+						className="dropdown-container"
+						style={{ display: "flex", flexDirection: "column" }}
+						ref={(element) => (this.dropdownContainer = element)}
+					>
+						<div className="trigger-container">
+							<button
+								className={`dropdown-trigger role-${this.settings.role}`}
+								onClick={this.toggleMenu}
+							>
+								<div
+									className="dropdown-trigger-head"
+									title={this.settings.title}
+								>
+									{this.settings.title}
+								</div>
+								<AiOutlineCaretDown className="dropdown-trigger-icon" />
+							</button>
+						</div>
+						<div className="list-container">
+							<ul
+								className={`
+									dropdown-list
+									${this.state.open ? "d-flex" : "d-none"}
+								`}
+								onClick={this.selectRecord}
+							>
+								{options}
+							</ul>
+						</div>
 					</div>
-				{/* </div> */}
-			</div>
+				</div>
+				{/* <div style={{ position: "absolute", bottom: "10%" }}>
+					{JSON.stringify(this.settings)}
+				</div> */}
+			</>
 		);
 	};
 }

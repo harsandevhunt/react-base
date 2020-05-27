@@ -4,7 +4,7 @@ import { RouteComponentProps } from '@reach/router';
 const Home = (props:RouteComponentProps)=> {
     return (
         <div>
-            <h2>Home</h2>
+            <h3>Home</h3>
         </div>
     );
 }

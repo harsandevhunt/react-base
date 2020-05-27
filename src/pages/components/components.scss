@@ -3,11 +3,15 @@
 }
 .component-grid{
     display: grid;
-    grid-template-columns:15% 85%;
+    grid-template-columns:15% 55% 30%;
     grid-column-gap: 5px;
-    min-height: 400px;
-    section,aside{
-        border: 1px solid lightseagreen;
+    min-height: 530px;
+    grid-gap: 0px;
+    border-bottom: 1px solid lightseagreen;
+    border-left: 1px solid lightseagreen;
+    &> .section{
+        border-top: 1px solid lightseagreen;
+        border-right: 1px solid lightseagreen;
     }
 }
 .defaultLanding{

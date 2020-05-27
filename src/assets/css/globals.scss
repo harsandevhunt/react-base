@@ -1,6 +1,9 @@
 //Global scss
 //Font family Roboto
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@font-face {
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Regular.ttf') format('truetype');
+}
 .mni-height-250{
     min-height: 250px;
 }
@@ -20,11 +23,6 @@
 }
 
 //Global Settings
-:root{
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-}
+// :root{
+
+// }
