@@ -1,7 +1,7 @@
 header{
     background: lightseagreen;
     position: fixed;
-    width: 100vw;
+    width: 100%;
     top: 0px;
     height: 3rem;
     box-sizing: border-box;
@@ -13,33 +13,50 @@ header{
         clear: both;
     }
     nav{
+        width: 100%;
         position: absolute;
         display: inline-block;
-        a{
-            text-decoration: none;
-            color: white;
-            transition: transform 0.3s ease;
-        }
-        a:hover{
-            transform: translateY(-3px);
-        }
-        .active{
-            background: white;
-            color: #666;
-            border-radius: 8px;
-            padding: 3px 10px;
-            text-shadow: 0px 0px 0px black;
-        }
-        ul{
-            padding: 0px;
-            margin: 15px 30px;
-            display: inline-block;
-            list-style-type: none;
-            li{
-                float: left;
-                padding: 0px 15px;
-                text-shadow: 1px 3px 10px black;
+        .nav-link{
+            a{
+                text-decoration: none;
+                color: white;
+                transition: transform 0.3s ease;
             }
+            a:hover{
+                transform: translateY(-3px);
+            }
+            .active{
+                background: white;
+                color: #666;
+                border-radius: 8px;
+                padding: 3px 10px;
+                text-shadow: 0px 0px 0px black;
+            }
+            ul{
+                padding: 0px;
+                margin: -38px 50px;
+                display: flex;
+                list-style-type: none;
+                li{
+                    float: left;
+                    padding: 0px 15px;
+                    text-shadow: 1px 3px 10px black;
+                }
+            }
+        }
+        
+        .userMenu{
+            float: right;
+            margin:24px;
+            .dropdown-trigger-head{
+                font-size: 16px;
+                color: white;
+                line-height: 30px;
+            }
+            .dropdown-trigger-icon{
+                color: white !important;
+            }
+
         }
     }
 }

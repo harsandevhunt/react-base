@@ -26,7 +26,7 @@ interface props {
 	active?: boolean;
 	multi?: boolean;
 	path?: RouteComponentProps;
-	align?: Side;
+	align?: Side | "center";
 	position?: Side;
 	flow?: Side;
 	displaySelected?: boolean;
@@ -140,6 +140,7 @@ class Dropdown extends React.Component<props, state> {
 	getMenuItem = (menuItem: any, index: number) => {
 		let value = menuItem.value;
 		let selItem: any;
+		let context = this;
 		function checkSelItem(sel: any, tit: string): boolean {
 			let resp = false;
 			if (sel?.length && sel.indexOf(tit) > -1) {
@@ -147,7 +148,10 @@ class Dropdown extends React.Component<props, state> {
 			} else if (typeof sel === "string" && sel === tit) {
 				resp = true;
 			}
-			return resp;
+			if(context.props.role === 'link')
+				return false;
+			else
+				return resp;
 		}
 		//Form list arrow based on flow
 		let arrowSymbol =
@@ -239,7 +243,8 @@ class Dropdown extends React.Component<props, state> {
 					this.setState({ selectedItem: selObj });
 					//Passing selected item to parent component
 					setTimeout(()=>{
-						this.props.onDropdownChange(this.state.selectedItem);
+						if(this.props.onDropdownChange)
+							this.props.onDropdownChange(this.state.selectedItem);
 					})
 				}
 				if (!this.props.multi) this.toggleMenu("hide");
@@ -266,7 +271,8 @@ class Dropdown extends React.Component<props, state> {
 		this.setState({ selectedItem: selectedItem });
 		//Passing selected item to parent component
 		setTimeout(()=>{
-			this.props.onDropdownChange(this.state.selectedItem);
+			if(this.props.onDropdownChange)
+				this.props.onDropdownChange(this.state.selectedItem);
 		})
 	};
 
@@ -325,6 +331,7 @@ class Dropdown extends React.Component<props, state> {
 				<div
 					className={`
 								dropdown-component
+								role-${this.settings.role}
 								${this.settings.display}
 								align-${this.settings.align}
 								p-${this.settings.position}
@@ -348,7 +355,7 @@ class Dropdown extends React.Component<props, state> {
 					>
 						<div className="trigger-container">
 							<button
-								className={`dropdown-trigger role-${this.settings.role}`}
+								className="dropdown-trigger"
 								onClick={this.toggleMenu}
 							>
 								<div

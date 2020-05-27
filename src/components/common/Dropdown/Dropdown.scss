@@ -1,11 +1,11 @@
 //Variable Declaration
 $unit: px;
-$elem-height: 36;
 $background-elem:white;
 $list-background:white;
 $list-background-hover:grey;
 $list-background-active:grey;
-$color-trigger-icon:grey;
+$trigger-color-icon:grey;
+$trigger-height-link-default:28px; 
 $list-color:blue;
 $list-color-active:white;
 $list-color-selected:white;
@@ -14,6 +14,10 @@ $list-height-compact:28;
 $list-height-default:36;
 
 .dropdown-component {
+	*, *::after, *::before {
+		box-sizing: border-box;
+		clear: both;
+	}
 	width: auto;
 	&.default {
 		width: auto;
@@ -78,13 +82,24 @@ $list-height-default:36;
 
 	}
 	//Role based CSS
-	.role-link{
-		border: none;
-		background: none;
-		outline: none;
-		box-shadow: none !important;
-		&:focus{
+	&.role-link{
+		.dropdown-trigger{
+			border: none;
+			background: none;
 			outline: none;
+			box-shadow: none !important;
+			&:focus{
+				outline: none;
+			}
+			.dropdown-trigger-icon{
+				margin-top: 5px;
+			}
+		}
+		&.default{
+			.dropdown-trigger{
+				height: $trigger-height-link-default;
+			}
+
 		}
 	}
 
@@ -92,6 +107,13 @@ $list-height-default:36;
 		display: flex;
 		flex-direction: row;
 	}
+	&.role-link{
+		.dropdown-trigger{
+			z-index: 5;
+			cursor: pointer !important;
+		}
+	}
+
 	.dropdown-container {
 		width: 100%;
 	}
@@ -111,7 +133,7 @@ $list-height-default:36;
 		}
 		.dropdown-trigger-icon {
 			max-width: 25%;
-			color: $color-trigger-icon;
+			color: $trigger-color-icon;
 			position: relative;
 			float: right;
 			font-size: 20px;
@@ -190,9 +212,6 @@ $list-height-default:36;
 	}
 
 	.dropdown-list {
-		& * {
-			clear: both;
-		}
 		height: auto;
 		list-style: none;
 		margin: 0;
